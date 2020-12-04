@@ -2,7 +2,7 @@
 Python script to turn the output of the `airport` utility to more manageable JSON format with some fields filtered out.
 
 ## TL;DR
-This script is result of the necessity to scan the wireless networks on macOS from terminal and the need to be able to consume it by some other components understanding JSON.
+This script is result of the necessity to scan the wireless networks on macOS from terminal and the need to consume the result by some other components understanding JSON.
 
 ### Usage
 ```bash
@@ -42,7 +42,7 @@ $ # Output
 ```
 
 ## Story time
-When dealing with some terminal wizardery I needed to find out all wireless networks in the vacinity. The Apple has tool for probing the wireless network "hidden" in `/System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport`. The tool outputs scan data (using `airport -s`) such as:
+When dealing with some terminal wizardery I needed to find out all wireless networks in the vacinity. The Apple have a tool for probing the wireless networks "hidden" in private framework: `/System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport`. The tool outputs scan data (using `airport -s`) such as:
 
 ```bash
                             SSID BSSID             RSSI CHANNEL HT CC SECURITY (auth/unicast/group)
@@ -54,7 +54,7 @@ When dealing with some terminal wizardery I needed to find out all wireless netw
 
 ```
 
-The first approach is to try to naively parse it "by hand" somewhere along the lines of (this code is quite old, is horrible :facepalm: - but as proof of concept for anyone interested) using good old bash and tools:
+The first approach is to try to naively parse it "by hand" - using good old bash and tools - somewhere along the lines of (this code: is quite old; is horrible :facepalm: - but can be used as proof of concept for anyone interested - so here you go):
 ```bash
 EXEC_AIR="/System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport"
 WIFIS=$($EXEC_AIR -s | awk -F. '\
@@ -70,7 +70,7 @@ WIFIS=$($EXEC_AIR -s | awk -F. '\
 echo $(jq -nc --argjson list "$WIFIS" '{Available: ($list)')
 ```
 
-For script usage Apple provided the `-x` option allowing the output to be spitted out in XML (PLIST) format but `plutil` didn't take it as an input (abbrevieted version for one interface):
+Apple provided the `-x` option allowing the output to be spitted out in XML (PLIST) format but `plutil` didn't take it as an input (abbrevieted version for one interface):
 
 <details>
 <summary>XML output example</summary>
@@ -166,7 +166,7 @@ For script usage Apple provided the `-x` option allowing the output to be spitte
 </details>
 
 
-After searching for some while and finding the coresponding RNS IE and WPA IE values for encryptions, the scirpt in this repository was born. It outputs information similar to the default `airport -s` only in `JSON`:
+After searching for some while and finding the coresponding `RNS IE` and `WPA IE` values for encryptions, the scirpt in this repository was born. It outputs information similar to the default `airport -s` only in `JSON`:
 ```json
 [
   {
